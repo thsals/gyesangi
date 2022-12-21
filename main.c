@@ -250,19 +250,23 @@ void drw(int bgColor, int textColor) {
 
 }
 void click(int* xx, int* yy) {
-    INPUT_RECORD record; // 콘솔 입력 버퍼의 입력 이벤트 구조체
-    DWORD read; // unsigned long ( 데이터 기본 처리 단위인 WORD의 2배 )
-    int posX, posY; // 마우스가 클릭된 좌표를 저장
-    int winner; // 게임 무승부, 이긴 플레이어를 저장
+    while (1)
+    {
+        ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), &rec, 1, &dwNOER); // 콘솔창 입력을 받아들임.
+        if (rec.EventType == MOUSE_EVENT){// 마우스 이벤트일 경우
 
-    ReadConsoleInput(CIN, &record, 1, &read); // 콘솔 입력 이벤트 읽기
 
-    if (record.EventType == MOUSE_EVENT) {
-        if (record.Event.MouseEvent.dwButtonState & FROM_LEFT_1ST_BUTTON_PRESSED
-            && !(record.Event.MouseEvent.dwEventFlags & MOUSE_MOVED)
-            && !(record.Event.MouseEvent.dwEventFlags & DOUBLE_CLICK)) {
-            int posX = record.Event.MouseEvent.dwMousePosition.X;
-            int posY = record.Event.MouseEvent.dwMousePosition.Y;
+            if (rec.Event.MouseEvent.dwButtonState & FROM_LEFT_1ST_BUTTON_PRESSED){ // 좌측 버튼이 클릭되었을 경우
+
+            int mouse_x = rec.Event.MouseEvent.dwMousePosition.X; // X값 받아옴
+                int mouse_y = rec.Event.MouseEvent.dwMousePosition.Y; // Y값 받아옴
+                drw(BLACK, WHITE);
+                gotoxy(52,27);
+                printf("%2d %2d\n",mouse_x,mouse_y);
+                *xx=mouse_x; //x값을 넘김
+                *yy=mouse_y; //y값을 넘김
+                break;
+            }
         }
     }
 }
@@ -501,6 +505,7 @@ int main()
 
             exit(0);
         }
+        Sleep(100);
         click(&xx, &yy);
         gotoxy(50, 28);
         drw(BLACK, WHITE);
@@ -599,14 +604,6 @@ int main()
                     if (a[i] == 0) zeroprint(i);
                 }
             }
-
-
-
-
-
-
-
-
             if (gyesangi[yy + 1][xx + 1] == 5 || gyesangi[yy + 1][xx + 1] == 19) {
                 cnt++;
                 for (k = 3; k < 12; k++) {
